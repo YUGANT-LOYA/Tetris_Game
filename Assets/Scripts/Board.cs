@@ -3,13 +3,13 @@ using UnityEngine.Tilemaps;
 
 public class Board : MonoBehaviour
 {
-    //tilemap Property.
+    //Tilemap Property.
     public Tilemap tilemap { get; private set; }
 
-    //ActivePiece variables
-    public Piece activePiece { get; private set; }
+    //Piece variable.
+    public Piece ActivePiece { get; private set; }
 
-    //Structure from Tetromino script.
+    //Structure array from Tetromino script.
     public TetrominoData[] tetrominos;
 
     //Vector Position for spawning piece.
@@ -19,7 +19,7 @@ public class Board : MonoBehaviour
     public Vector2Int boardSize = new Vector2Int(10, 20);
 
     //Property of C# for calculating boundsize using RectInt.
-    //RectInt is an In-built function which test the bounds for us automatically.
+    //RectInt is an In-built function which simplifies testing the bounds for us.
     public RectInt Bounds
     {
         get
@@ -35,7 +35,7 @@ public class Board : MonoBehaviour
         //Taking reference of Tilemap in this script.
         //As we know Tilemap is child of the Board GameObject
         this.tilemap = GetComponentInChildren<Tilemap>();
-        this.activePiece = GetComponentInChildren<Piece>();
+        this.ActivePiece = GetComponentInChildren<Piece>();
 
         for (int i = 0; i < this.tetrominos.Length; i++)
         {
@@ -52,11 +52,13 @@ public class Board : MonoBehaviour
     {
         //To select random piece from the Tetrominodata.
         int random = Random.Range(0, this.tetrominos.Length);
+
+        //To access field of random Tetro(I,O,T,L,S,J,Z) we use a variable to access those data from TetrominoData.
         TetrominoData data = this.tetrominos[random];
 
         //Initialize method/Function used ans 3 parameter is passed for spawning.
-        this.activePiece.Initialize(this, this.spawnPosition, data);
-        Set(this.activePiece);
+        this.ActivePiece.Initialize(this, this.spawnPosition, data);
+        Set(this.ActivePiece);
     }
 
     public void Set(Piece piece)
@@ -90,6 +92,7 @@ public class Board : MonoBehaviour
         {
             Vector3Int tilePosition = piece.cells[i] + position;
             //If the tileposition is out of bound, it will return false.
+            //Contains is the function inside RectInt which checks whether it is inside the bound or not.
             if (!bound.Contains((Vector2Int)tilePosition))
             {
                 return false;

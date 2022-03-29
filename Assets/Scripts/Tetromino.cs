@@ -17,7 +17,7 @@ public enum Tetromino
 [Serializable]
 public struct TetrominoData
 {
-    //Created an instance/object of enum Tetromino.
+    //Created an instance/object to get access of enum Tetromino.
     public Tetromino tetromino;
 
     //Instance of Tile.
