@@ -14,7 +14,7 @@ public class Piece : MonoBehaviour
         this.position = position;
         this.data = data;
 
-        //This is initialization of the piece when it spawns in its default space. 
+        //This is initialization of the new piece when it spawns in its default space position.
         this.rotationIndex = 0;
 
         //If cells array is null, so we will Initialize the array.
@@ -26,7 +26,7 @@ public class Piece : MonoBehaviour
         //We will now copy the data.cell array into this array.
         for (int i = 0; i < data.cells.Length; i++)
         {
-            this.cells[i] = (Vector3Int) data.cells[i];
+            this.cells[i] = (Vector3Int)data.cells[i];
         }
     }
 
@@ -98,17 +98,32 @@ public class Piece : MonoBehaviour
 
     private void RotationTetro(int direction)
     {
+        int originalRotation = this.rotationIndex;
         //For Rotation of a Tetro in 0 to 4 possible ways.
         this.rotationIndex = Wrap(this.rotationIndex + direction, 0, 4);
 
+
+        ApplyRotationMatrix(direction);
+
+        if (!TestWallKicks(this.rotationIndex, direction))
+        {
+            this.rotationIndex = originalRotation;
+            ApplyRotationMatrix(-direction);
+        }
+    }
+
+    private void ApplyRotationMatrix(int direction)
+    {
         //We will not select "this.data.cells.Length" because it will make changes in the original cells and board, but we need changes in the copy of the cell we created, thats the reason we choose and edit in "this.cells.Length".
         for (int i = 0; i < this.cells.Length; i++)
         {
+            //We are using Vector3 instead of Vector3Int becoz as we know the standard rotation of the Tetro I and Tetro O is different than others, they have some offset value which make the number as float, that is the reason of Vector3.
             Vector3 cell = this.cells[i];
             //Local co-ordinates.
-            int x , y;
+            int x, y;
 
             //There is a difference in rotation of I and O comparing with others, so we are using switch case for that.
+            //Complex Concept of Rotation.
             switch (this.data.tetromino)
             {
                 case Tetromino.I:
@@ -119,8 +134,9 @@ public class Piece : MonoBehaviour
                     x = Mathf.CeilToInt((cell.x * Data.RotationMatrix[0] * direction) + (cell.y * Data.RotationMatrix[1] * direction));
                     y = Mathf.CeilToInt((cell.x * Data.RotationMatrix[2] * direction) + (cell.y * Data.RotationMatrix[3] * direction));
                     break;
+
                 default:
-                    x =Mathf.RoundToInt( (cell.x * Data.RotationMatrix[0] * direction) + (cell.y * Data.RotationMatrix[1] * direction));
+                    x = Mathf.RoundToInt((cell.x * Data.RotationMatrix[0] * direction) + (cell.y * Data.RotationMatrix[1] * direction));
                     y = Mathf.RoundToInt((cell.x * Data.RotationMatrix[2] * direction) + (cell.y * Data.RotationMatrix[3] * direction));
                     break;
             }
@@ -128,14 +144,41 @@ public class Piece : MonoBehaviour
             this.cells[i] = new Vector3Int(x, y, 0);
         }
     }
+        private bool TestWallKicks(int rotationIndex, int rotationDirection)
+        {
+            int wallKickIndex = GetWallKickIndex(rotationIndex, rotationDirection);
 
-    //Standard wrap utility maths function, to check whether it is inside the bound or outside the bound
-    private int Wrap(int input, int min, int max)
-    {
-        if (input < min)
-            return max - (min - input) % (max - min);
-        else
-            return min + (input - min) % (max - min);
-    }
+            for (int i = 0; i < this.data.wallKicks.GetLength(1); i++)
+            {
+                Vector2Int translation = this.data.wallKicks[wallKickIndex, i];
+
+                if (Move(translation))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private int GetWallKickIndex(int rotationIndex, int rotationDirection)
+        {
+            int wallKickIndex = rotationIndex * 2;
+
+            if (rotationDirection < 0)
+            {
+                wallKickIndex--;
+            }
+
+            return Wrap(wallKickIndex, 0, this.data.wallKicks.GetLength(0));
+        }
+
+        //Standard wrap utility maths function, to check whether it is inside the bound or outside the bound.
+        private int Wrap(int input, int min, int max)
+        {
+            if (input < min)
+                return max - (min - input) % (max - min);
+            else
+                return min + (input - min) % (max - min);
+        }
 
 }

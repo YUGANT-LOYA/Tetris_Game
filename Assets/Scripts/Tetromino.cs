@@ -26,6 +26,8 @@ public struct TetrominoData
     //2D array for storing cell position vectors and shapes.
     public Vector2Int[] cells { get; private set; }
 
+    public Vector2Int[,] wallKicks { get; private set; }
+
     //We have Vector2Int[] cells that we are assigning based on static data .
     public void Initialize()
     {
