@@ -40,7 +40,7 @@ public static class Data
         },
     };
 
-    /*
+
     private static readonly Vector2Int[,] WallKicksI = new Vector2Int[,]
     {
         {
@@ -117,5 +117,5 @@ public static class Data
         {Tetromino.T, WallKicksJLOSTZ},
         {Tetromino.Z, WallKicksJLOSTZ},
     };
-    */
+
 }
