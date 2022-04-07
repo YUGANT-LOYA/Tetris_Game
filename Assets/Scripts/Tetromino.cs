@@ -32,5 +32,6 @@ public struct TetrominoData
     public void Initialize()
     {
         this.cells = Data.Cells[this.tetromino];
+        this.wallKicks = Data.WallKicks[this.tetromino];
     }
 }

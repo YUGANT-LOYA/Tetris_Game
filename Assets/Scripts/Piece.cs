@@ -76,7 +76,7 @@ public class Piece : MonoBehaviour
         }
         //This function will update, and keep track of when the normal time exceeds the stepTime.
         //and then the Step() function will be called.
-        if(Time.time >= this.stepTime)
+        if (Time.time >= this.stepTime)
         {
             Step();
         }
@@ -87,15 +87,16 @@ public class Piece : MonoBehaviour
 
     private void Step()
     {
-        this.stepTime = Time.time + this.stepDelay; 
+        this.stepTime = Time.time + this.stepDelay;
         //This will make out Tetro Piece continously move downwards.
         Move(Vector2Int.down);
         //This Statement will lock the piece, if the piece is not moving more than lockDelay.
-        if(this.lockTime >= this.lockDelay)
+        if (this.lockTime >= this.lockDelay)
         {
             Lock();
         }
     }
+
     //This will lock the current piece and spawn new piece.
     private void Lock()
     {
@@ -165,7 +166,6 @@ public class Piece : MonoBehaviour
             switch (this.data.tetromino)
             {
                 case Tetromino.I:
-
                 case Tetromino.O:
                     cell.x -= 0.5f;
                     cell.y -= 0.5f;
@@ -182,6 +182,7 @@ public class Piece : MonoBehaviour
             this.cells[i] = new Vector3Int(x, y, 0);
         }
     }
+
     //We should know in which RotationIndex we are and in which direction we need to rotate for TestWallKicks.
     private bool TestWallKicks(int rotationIndex, int rotationDirection)
     {
@@ -198,10 +199,11 @@ public class Piece : MonoBehaviour
         }
         return false;
     }
+
     //There is a pattern in finding WallKickIndex.
     private int GetWallKickIndex(int rotationIndex, int rotationDirection)
     {
-        //This is pattern for index, we have to select every alternative. The pattern is on Tetris Wikipedia.   
+        //This is pattern for index, we have to select every alternative. The pattern is on Tetris Wikipedia.
         int wallKickIndex = rotationIndex * 2;
 
         if (rotationDirection < 0)
@@ -216,8 +218,12 @@ public class Piece : MonoBehaviour
     private int Wrap(int input, int min, int max)
     {
         if (input < min)
+        {
             return max - (min - input) % (max - min);
+        }
         else
+        {
             return min + (input - min) % (max - min);
+        }
     }
 }
