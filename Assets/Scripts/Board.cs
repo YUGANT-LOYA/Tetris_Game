@@ -58,7 +58,25 @@ public class Board : MonoBehaviour
 
         //Initialize method/Function used ans 3 parameter is passed for spawning.
         this.ActivePiece.Initialize(this, this.spawnPosition, data);
+
+
+        //Before Setting and Initializing the piece, we will check whether it is ValidPosition to call or not.Is the board full or the piece cannot be placed due to less space...etc.
+        if(IsValidPosition(this.ActivePiece, spawnPosition))
+        {
+            Set(this.ActivePiece);
+        }
+        else
+        {
+            GameOver();
+        }
+
         Set(this.ActivePiece);
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("GAME OVER !!!");
+        this.tilemap.ClearAllTiles();
     }
 
     public void Set(Piece piece)
@@ -66,6 +84,7 @@ public class Board : MonoBehaviour
         for (int i = 0; i < piece.cells.Length; i++)
         {
             //Aquiring position of cells.
+            //We use Vecotr3Int, because the Vector3Int is only used for Tilemaps...so we have to use it.
             Vector3Int tilePosition = piece.cells[i] + piece.position;
             //Setting tile on Tilemap.
             this.tilemap.SetTile(tilePosition, piece.data.tile);
@@ -103,5 +122,62 @@ public class Board : MonoBehaviour
             }
         }
         return true;
+    }
+
+    public void ClearLines()
+    {
+        //Reference to bounds.
+        RectInt bounds = this.Bounds;
+        //We need to start checking from bottom for clearing Lines.
+        int row = bounds.yMin;
+
+        //Check each existing row from 
+        while (row < bounds.yMax)
+        {
+            if (IsLineFull(row))
+                LineClear(row);
+            else
+                row++;
+        }
+    }
+    //This function iterates all the column if the line is full or not. 
+    private bool IsLineFull(int row)
+    {
+        RectInt bounds = this.Bounds;
+        for (int col = bounds.xMin; col < bounds.xMax; col++)
+        {
+            //We have to take Vector3 becoz, the tilemap is only supported by Vector3.
+            Vector3Int position = new Vector3Int(col, row, 0);
+
+            if (!this.tilemap.HasTile(position))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void LineClear(int row)
+    {
+        RectInt bounds = this.Bounds;
+
+        for (int col = bounds.xMin; col < bounds.xMax; col++)
+        {
+            Vector3Int position = new Vector3Int(col, row, 0);
+            this.tilemap.SetTile(position, null);
+        }
+
+        while(row < bounds.yMax)
+        {
+            for(int col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col, row + 1, 0);
+                TileBase above = this.tilemap.GetTile(position);
+
+                position = new Vector3Int(col, row, 0);
+                this.tilemap.SetTile(position, above);
+            }
+            row++;
+        }
     }
 }

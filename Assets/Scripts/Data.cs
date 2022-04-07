@@ -3,8 +3,8 @@ using UnityEngine;
 
 public static class Data
 {
-    public static readonly float cos = Mathf.Cos(Mathf.PI / 2f);
-    public static readonly float sin = Mathf.Sin(Mathf.PI / 2f);
+    public static readonly float cos = -Mathf.Cos(Mathf.PI / 2f);
+    public static readonly float sin = -Mathf.Sin(Mathf.PI / 2f);
     public static readonly float[] RotationMatrix = new float[] { cos, sin, -sin, cos };
 
     //It is a dictionary which is storing a key(which is Tetromino I,O,J,L,T,S,Z) and value(Position/Vector Array of the blocks to make that structure or pattern)
